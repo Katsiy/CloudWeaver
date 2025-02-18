@@ -3,30 +3,36 @@ import { defineStackbitConfig } from '@stackbit/types';
 import { GitContentSource } from '@stackbit/cms-git';
 import type { Model } from '@stackbit/types';
 
-const docModel: Model = {
-  name: 'doc',
+// stackbit.config.ts
+const pageModel: Model = {
+  name: 'page',
   type: 'page',
-  urlPath: '/docs/{slug}',
-  file: 'src/content/docs/**/*.md',
+  urlPath: '/{slug}',
+  file: 'src/content/pages/**/*.mdx',
   fields: [
-    { 
-      name: 'slug', 
-      type: 'string', 
-      required: true,
-      constrains: {
-        pattern: '^[a-z0-9/-]+$'  // 与 Zod 校验规则完全一致
-      }
-    },
     { name: 'title', type: 'string', required: true },
-    { 
-      name: 'category', 
-      type: 'enum',
-      options: ['guide', 'api', 'tutorial'],  // 与 Zod enum 完全匹配
-      required: true
-    },
-    { name: 'order', type: 'number' }
+    { name: 'layout', type: 'enum', options: ['default', 'full-width'] }
   ]
 };
+
+export default defineStackbitConfig({
+  // ...
+  contentSources: [
+    new GitContentSource({
+      contentDirs: ['src/content/docs', 'src/content/pages'],
+      models: [docModel, pageModel]
+    })
+  ],
+  siteMap: ({ objects }) => [
+    ...objects
+      .filter(obj => obj.modelName === 'doc')
+      .map(doc => ({ urlPath: `/docs/${doc.slug}` })),
+    ...objects
+      .filter(obj => obj.modelName === 'page')
+      .map(page => ({ urlPath: `/${page.slug || 'index'}` }))
+  ]
+});
+
 
 
 export default defineStackbitConfig({
