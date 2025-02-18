@@ -11,7 +11,9 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.32.0",
+    "@astrojs/starlight": "^0.12.1",
+    "@stackbit/cli": "^0.6.4",
+    "@stackbit/cms-git": "^1.0.28"
     "astro": "^5.1.5",
     "sharp": "^0.32.5"
   }
