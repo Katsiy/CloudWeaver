@@ -1,4 +1,4 @@
-import { GitContentSource } from '@stackbit/cms-git';
+#import { GitContentSource } from '@stackbit/cms-git';
 
 export default {
   contentSources: [
@@ -17,4 +17,16 @@ export default {
       }
     })
   ]
+};
+// stackbit.config.js
+module.exports = {
+  stackbitVersion: '0.5.4',
+  ssgName: 'astro',       # 明确指定 Astro
+  nodeVersion: '18',
+  contentSources: [{
+    type: 'git',
+    rootPath: './',       # 从根目录开始扫描
+    branch: 'preview',
+    contentDirs: ['src/content']  # 显式声明内容目录
+  }]
 };
