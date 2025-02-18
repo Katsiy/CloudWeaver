@@ -1,21 +1,19 @@
+// stackbit.config.js
 import { defineStackbitConfig } from '@stackbit/types';
+import { GitContentSource } from '@stackbit/cms-git';
 
 export default defineStackbitConfig({
-    "stackbitVersion": "~0.6.0",
-    "nodeVersion": "18",
-    "ssgName": "astro",
-    "contentSources": [],
-    "postInstallCommand": "npm i --no-save @stackbit/types"
-})
-#import { GitContentSource } from '@stackbit/cms-git';
-
-export default {
+  stackbitVersion: '\~0.6.0',
+  ssgName: 'astro',
+  nodeVersion: '18',
+  
   contentSources: [
     new GitContentSource({
       rootPath: __dirname,
-      contentDirs: ['src/content/posts'], // 你的Markdown内容目录
+      contentDirs: ['src/content/posts'], // 确保此路径存在
+      branch: 'preview',
       models: {
-        post: {
+        post: { // 模型名称需与文件名匹配，如 `src/content/posts/post.md`
           type: 'page',
           urlPath: '/posts/{slug}',
           fields: [
@@ -26,7 +24,8 @@ export default {
       }
     })
   ]
-};
+});
+
 // stackbit.config.js
 module.exports = {
   stackbitVersion: '0.5.4',
