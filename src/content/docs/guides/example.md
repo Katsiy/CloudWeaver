@@ -1,7 +1,11 @@
 ---
-title: Example Guide
-description: A guide in my new Starlight docs site.
+title: "示例指南"
+slug: "guides/example"  # 必须符合URL规范
+category: "getting-started"
+order: 1
 ---
+这里添加你的内容...
+
 
 Guides lead a user through a specific task they want to accomplish, often with a sequence of steps.
 Writing a good guide requires thinking about what your users are trying to do.
