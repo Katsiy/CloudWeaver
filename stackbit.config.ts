@@ -1,32 +1,50 @@
-#import { GitContentSource } from '@stackbit/cms-git';
+import { defineStackbitConfig } from '@stackbit/types';
+import { GitContentSource } from '@stackbit/cms-git';
+import path from 'path';
 
-export default {
-  contentSources: [
-    new GitContentSource({
-      rootPath: __dirname,
-      contentDirs: ['src/content/posts'], // 你的Markdown内容目录
-      models: {
-        post: {
-          type: 'page',
-          urlPath: '/posts/{slug}',
-          fields: [
-            { name: 'title', type: 'string', required: true },
-            { name: 'content', type: 'markdown', required: true }
-          ]
-        }
+const starlightModel = {
+  name: 'doc',
+  type: 'page',
+  urlPath: '/docs/{slug}',
+  file: path.join(process.cwd(), 'src/content/docs/**/*.mdx'),
+  fields: [
+    { 
+      name: 'slug', 
+      type: 'string', 
+      required: true,
+      constraints: { 
+        pattern: '^[a-z0-9/-]+$',
+        unique: true
       }
-    })
+    },
+    {
+      name: 'category',
+      type: 'enum',
+      options: ['guide', 'reference', 'overview'],
+      controlType: 'dropdown'
+    }
   ]
 };
-// stackbit.config.js
-module.exports = {
-  stackbitVersion: '0.5.4',
-  ssgName: 'astro',       # 明确指定 Astro
+
+export default defineStackbitConfig({
+  stackbitVersion: '\~0.6.0',
+  ssgName: 'astro',
   nodeVersion: '18',
-  contentSources: [{
-    type: 'git',
-    rootPath: './',       # 从根目录开始扫描
-    branch: 'preview',
-    contentDirs: ['src/content']  # 显式声明内容目录
-  }]
-};
+  
+  contentSources: [
+    new GitContentSource({
+      rootPath: process.cwd(),
+      contentDirs: [path.join(process.cwd(), 'src/content/docs')],
+      models: [starlightModel]
+    })
+  ],
+  
+  siteMap: ({ objects }) => {
+    return objects?.map(obj => ({
+      urlPath: obj.slug === 'index' ? 
+        '/docs' : 
+        `/docs/${obj.slug.replace(/\/index$/, '')}`,
+      sourceObjectId: obj.id
+    })) || [];
+  }
+});
