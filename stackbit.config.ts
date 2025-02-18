@@ -40,11 +40,12 @@ export default defineStackbitConfig({
   ],
   
   siteMap: ({ objects }) => {
-    return objects?.map(obj => ({
-      urlPath: obj.slug === 'index' ? 
-        '/docs' : 
-        `/docs/${obj.slug.replace(/\/index$/, '')}`,
-      sourceObjectId: obj.id
+    return objects?.map(obj => {
+      // Starlight 路由规则适配
+      const slugPath = obj.slug === 'index' ? '' : obj.slug;
+      return {
+        urlPath: `/docs/${slugPath}`.replace(/\/$/, ''), // 自动处理尾部斜杠
+        sourceObjectId: obj.id
     })) || [];
   }
 });
