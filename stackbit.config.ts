@@ -1,13 +1,10 @@
-// stackbit.config.ts
 import { defineStackbitConfig } from '@stackbit/types';
 import { GitContentSource } from '@stackbit/cms-git';
 import type { Model } from '@stackbit/types';
 
-// 文档模型
 const docModel: Model = {
   name: 'doc',
   type: 'page',
-  singleInstance: false,
   label: 'Documentation Page',
   urlPath: '/docs/{slug}',
   file: 'src/content/docs/**/*.{md,mdx}',
@@ -16,38 +13,46 @@ const docModel: Model = {
       name: 'slug', 
       type: 'string', 
       required: true,
-      constraints: {
-        required: true,
+      constraints: { 
+        pattern: '^[a-z0-9/-]+$',
         unique: true
       }
     },
     { 
-      name: 'category', 
-      type: 'enum', 
-      options: ['overview', 'guide', 'api'],
-      required: true
+      name: 'category',
+      type: 'enum',
+      options: ['guide', 'reference', 'overview'],
+      controlType: 'dropdown'
+    },
+    { 
+      name: 'featured', 
+      type: 'boolean',
+      default: false
     }
   ]
 };
 
-// 页面模型
-const pageModel: Model = {
-  name: 'page',
+const homePageModel: Model = {
+  name: 'home',
   type: 'page',
-  singleInstance: false,
-  label: 'Basic Page',
-  urlPath: '/{slug}',
-  file: 'src/content/docs/**/*.md',  // 修正路径匹配
+  singleInstance: true,
+  label: 'Home Page',
+  urlPath: '/',
+  file: 'src/content/docs/index.mdx',
   fields: [
     { 
-      name: 'title', 
+      name: 'heroTitle', 
       type: 'string', 
       required: true 
+    },
+    { 
+      name: 'showToc', 
+      type: 'boolean',
+      default: true
     }
   ]
 };
 
-// 合并后的单一配置
 export default defineStackbitConfig({
   stackbitVersion: '\~0.6.0',
   ssgName: 'astro',
@@ -57,26 +62,17 @@ export default defineStackbitConfig({
     new GitContentSource({
       rootPath: __dirname,
       contentDirs: ['src/content/docs'],
-      branch: 'preview',
-      models: [docModel, pageModel]  // 包含所有模型
+      models: [docModel, homePageModel],
+      branch: 'preview'
     })
   ],
   
   siteMap: ({ objects }) => {
-    return (objects || []).map(obj => {
-      if (obj.modelName === 'doc') {
-        return {
-          urlPath: `/docs/${obj.slug}`,
-          sourceObjectId: obj.id
-        };
-      }
-      if (obj.modelName === 'page') {
-        return {
-          urlPath: `/${obj.slug || 'index'}`,
-          sourceObjectId: obj.id
-        };
-      }
-      return null;
-    }).filter(Boolean);
+    return objects?.map(obj => ({
+      urlPath: obj.modelName === 'home' ? 
+        '/' : 
+        `/docs/${obj.slug.replace(/^index$/, '')}`,
+      sourceObjectId: obj.id
+    })) || [];
   }
 });
