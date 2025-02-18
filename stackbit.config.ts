@@ -4,35 +4,39 @@ import { GitContentSource } from '@stackbit/cms-git';
 import type { Model } from '@stackbit/types';
 
 // 文档模型
-const docModel: Model = {
+// stackbit.config.ts
+const docModel = {
   name: 'doc',
   type: 'page',
-  singleInstance: false,
-  label: 'Documentation Page',
-  urlPath: '/docs/{slug}',
-  file: 'src/content/docs/**/*.md',
+  file: 'src/content/docs/**/*.{md,mdx}',
   fields: [
     { 
       name: 'slug', 
       type: 'string', 
-      required: true,
-      constraints: {
-        required: true,
-        unique: true
-      }
-    }, // 注意逗号
-    { 
-      name: 'title', 
-      type: 'string', 
-      required: true 
-    }, // 注意逗号
-    { 
-      name: 'category', 
-      type: 'enum', 
-      options: ['guide', 'api'] 
-    }
+      constraints: { required: true, unique: true }
+    },
+    { name: 'category', type: 'enum', options: ['overview', 'guide', 'api'] }
   ]
 };
+
+const pageModel = {
+  name: 'page',
+  type: 'page',
+  file: 'src/content/docs/**/*.md',
+  fields: [
+    { name: 'title', type: 'string', required: true }
+  ]
+};
+
+export default defineStackbitConfig({
+  contentSources: [
+    new GitContentSource({
+      contentDirs: ['src/content/docs', 'src/content/pages'],
+      models: [docModel, pageModel]
+    })
+  ]
+});
+
 
 export default defineStackbitConfig({
   stackbitVersion: '\~0.6.0',
