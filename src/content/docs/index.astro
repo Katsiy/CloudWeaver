@@ -1,0 +1,11 @@
+---
+import { getCollection } from 'astro:content';
+const homePage = await getCollection('pages').then(p => p.find(p => p.slug === 'home'));
+---
+
+{homePage && <Fragment>
+  <h1>{homePage.data.title}</h1>
+  <article>
+    <Content />
+  </article>
+</Fragment>}
