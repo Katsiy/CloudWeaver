@@ -6,10 +6,21 @@ import type { Model } from '@stackbit/types';
 const postModel: Model = {
   name: 'post',
   type: 'page',
-  urlPath: '/posts/{slug}',
+  urlPath: '/docs/{slug}',
   fields: [
-    { name: 'title', type: 'string', required: true },
-    { name: 'content', type: 'markdown', required: true }
+    { name: 'slug', type: 'string', required: true },
+    { name: 'title', type: 'string' },
+    { name: 'content', type: 'markdown'}
+  ]
+};
+
+// 数据模型（不生成页面）
+const authorModel: Model = {
+  name: 'author',
+  type: 'data',
+  fields: [
+    { name: 'name', type: 'string' },
+    { name: 'bio', type: 'markdown' }
   ]
 };
 
