@@ -7,7 +7,7 @@ import type { Model } from '@stackbit/types';
 const docModel: Model = {
   name: 'doc',
   type: 'page',
-  singleInstance: false,  // 明确声明非单例模型
+  singleInstance: false,
   label: 'Documentation Page',
   urlPath: '/docs/{slug}',
   file: 'src/content/docs/**/*.md',
@@ -16,30 +16,24 @@ const docModel: Model = {
       name: 'slug', 
       type: 'string', 
       required: true,
-      constraints: {  // 正确字段名
-+       unique: true,
-+       required: true
-+     }
-    },
-    { name: 'title', type: 'string', required: true },
-    { name: 'category', type: 'enum', options: ['guide', 'api'] }
+      constraints: {
+        required: true,
+        unique: true
+      }
+    }, // 注意逗号
+    { 
+      name: 'title', 
+      type: 'string', 
+      required: true 
+    }, // 注意逗号
+    { 
+      name: 'category', 
+      type: 'enum', 
+      options: ['guide', 'api'] 
+    }
   ]
 };
 
-// 页面模型
-const pageModel: Model = {
-  name: 'page',
-  type: 'page',
-  singleInstance: false,
-  label: 'Basic Page',
-  urlPath: '/{slug}',
-  file: 'src/content/docs/**/*.mdx',
-  fields: [
-    { name: 'title', type: 'string', required: true }
-  ]
-};
-
-// 核心修复点：确保配置对象完整闭合
 export default defineStackbitConfig({
   stackbitVersion: '\~0.6.0',
   ssgName: 'astro',
@@ -50,30 +44,14 @@ export default defineStackbitConfig({
       rootPath: __dirname,
       contentDirs: ['src/content/docs'],
       branch: 'preview',
-      models: [docModel, pageModel]  // 注意数组闭合
-    }) // <- 补全这个闭合括号
+      models: [docModel] // 确保数组闭合
+    })
   ],
   
-siteMap: ({ objects }) => {
-  // 添加安全校验
-  if (!objects) return [];
-  
-  return objects
-    .filter(obj => obj?.modelName && ['doc', 'page'].includes(obj.modelName))
-    .map(obj => {
-      if (obj.modelName === 'doc') {
-        return {
-          urlPath: `/docs/${obj.slug}`,
-          sourceObjectId: obj.id
-        };
-      }
-      return {
-        urlPath: `/${obj.slug || 'index'}`,
-        sourceObjectId: obj.id
-      };
-    });
-}
-
-      }));
+  siteMap: ({ objects }) => {
+    return objects?.map(obj => ({
+      urlPath: `/docs/${obj.slug}`,
+      sourceObjectId: obj.id
+    })) || [];
   }
-}); // <- 确保配置整体闭合
+});
