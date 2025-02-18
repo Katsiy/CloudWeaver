@@ -28,7 +28,7 @@ const pageModel: Model = {
   type: 'page',
   label: 'Basic Page',
   urlPath: '/{slug}',
-  file: 'src/content/pages/**/*.mdx',
+  file: 'src/content/docs/**/*.mdx',
   fields: [
     { name: 'title', type: 'string', required: true }
   ]
