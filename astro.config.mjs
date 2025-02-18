@@ -2,27 +2,36 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
-// https://astro.build/config
 export default defineConfig({
-	integrations: [
-		starlight({
-			title: 'My Docs',
-			social: {
-				github: 'https://github.com/withastro/starlight',
-			},
-			sidebar: [
-				{
-					label: 'Guides',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
-					],
-				},
-				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
-				},
-			],
-		}),
-	],
+  integrations: [
+    starlight({
+      title: 'CloudWeaver Docs',
+      customCss: ['/src/assets/custom.css'],
+      social: {
+        github: 'https://github.com/Katsiy/CloudWeaver',
+        discord: 'https://astro.build/chat'
+      },
+      sidebar: [
+        {
+          label: '开始',
+          autogenerate: { directory: 'overview' }
+        },
+        {
+          label: '操作指南',
+          autogenerate: { directory: 'guides' }
+        },
+        {
+          label: 'API 参考',
+          autogenerate: { directory: 'reference' }
+        }
+      ],
+      components: {
+        PageTitle: './src/components/CustomPageTitle.astro'
+      }
+    })
+  ],
+  redirects: {
+    '/docs/index': '/docs',
+    '/index': '/'
+  }
 });
