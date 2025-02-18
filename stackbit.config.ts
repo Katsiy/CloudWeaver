@@ -3,34 +3,22 @@ import { defineStackbitConfig } from '@stackbit/types';
 import { GitContentSource } from '@stackbit/cms-git';
 import type { Model } from '@stackbit/types';
 
-// 定义页面模型
-const pageModel: Model = {
-  name: 'page',
-  type: 'page', // 必须标记为 page 类型
-  urlPath: '/{slug}',
-  file: 'src/content/docs/{{slug}}.md', // 明确文件路径模板
+const docModel: Model = {
+  name: 'doc',
+  type: 'page',
+  label: 'Documentation Page',
+  urlPath: '/docs/{slug}',
+  file: 'src/content/docs/**/*.md',  // 使用 glob 模式匹配集合文件
   fields: [
     { 
       name: 'slug', 
       type: 'string', 
       required: true,
-      constrains: {
-        unique: true // 强制唯一标识
-      }
+      constrains: { unique: true }
     },
     { name: 'title', type: 'string', required: true },
+    { name: 'category', type: 'enum', options: ['guide', 'api'] },
     { name: 'content', type: 'markdown' }
-  ]
-};
-
-// 定义作者模型（数据模型）
-const authorModel: Model = {
-  name: 'author',
-  type: 'data', // 非页面内容
-  file: 'src/content/authors/{{name}}.md',
-  fields: [
-    { name: 'name', type: 'string', required: true },
-    { name: 'bio', type: 'markdown' }
   ]
 };
 
@@ -42,19 +30,19 @@ export default defineStackbitConfig({
   contentSources: [
     new GitContentSource({
       rootPath: __dirname,
-      contentDirs: ['src/content/docs'], // 确保此目录存在内容文件
+      contentDirs: ['src/content/docs'],
       branch: 'preview',
-      models: [pageModel, authorModel] // 包含所有模型
-    }) // 补全缺失的括号
+      models: [docModel]
+    })
   ],
   
-  // 修正后的站点地图函数
   siteMap: ({ objects }) => {
     return objects
-      .filter(obj => obj.modelName === 'page')
-      .map(page => ({
-        urlPath: `/${page.slug}`, // 直接使用解构字段
-        sourceObjectId: page.id
+      .filter(obj => obj.modelName === 'doc')
+      .map(doc => ({
+        urlPath: `/docs/${doc.slug}`,  // 对应 Astro 路由结构
+        sourceObjectId: doc.id,
+        priority: 0.8  // SEO 优化参数
       }));
   }
 });
