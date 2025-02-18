@@ -43,7 +43,7 @@ export default defineStackbitConfig({
   contentSources: [
     new GitContentSource({
       rootPath: __dirname,
-      contentDirs: ['src/content/docs', 'src/content/pages'],
+      contentDirs: ['src/content/docs'],
       branch: 'preview',
       models: [docModel, pageModel]  // 注意数组闭合
     }) // <- 补全这个闭合括号
