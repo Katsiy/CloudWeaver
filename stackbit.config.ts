@@ -7,6 +7,7 @@ import type { Model } from '@stackbit/types';
 const docModel: Model = {
   name: 'doc',
   type: 'page',
+  singleInstance: false,  // 明确声明非单例模型
   label: 'Documentation Page',
   urlPath: '/docs/{slug}',
   file: 'src/content/docs/**/*.md',
@@ -15,7 +16,10 @@ const docModel: Model = {
       name: 'slug', 
       type: 'string', 
       required: true,
-      constrains: { unique: true }
+      constraints: {  // 正确字段名
++       unique: true,
++       required: true
++     }
     },
     { name: 'title', type: 'string', required: true },
     { name: 'category', type: 'enum', options: ['guide', 'api'] }
@@ -26,6 +30,7 @@ const docModel: Model = {
 const pageModel: Model = {
   name: 'page',
   type: 'page',
+  singleInstance: false,
   label: 'Basic Page',
   urlPath: '/{slug}',
   file: 'src/content/docs/**/*.mdx',
@@ -49,13 +54,26 @@ export default defineStackbitConfig({
     }) // <- 补全这个闭合括号
   ],
   
-  siteMap: ({ objects }) => {
-    return objects
-      .filter(obj => ['doc', 'page'].includes(obj.modelName))
-      .map(item => ({
-        urlPath: item.modelName === 'doc' 
-          ? `/docs/${item.slug}` 
-          : `/${item.slug || 'index'}`
+siteMap: ({ objects }) => {
+  // 添加安全校验
+  if (!objects) return [];
+  
+  return objects
+    .filter(obj => obj?.modelName && ['doc', 'page'].includes(obj.modelName))
+    .map(obj => {
+      if (obj.modelName === 'doc') {
+        return {
+          urlPath: `/docs/${obj.slug}`,
+          sourceObjectId: obj.id
+        };
+      }
+      return {
+        urlPath: `/${obj.slug || 'index'}`,
+        sourceObjectId: obj.id
+      };
+    });
+}
+
       }));
   }
 }); // <- 确保配置整体闭合
