@@ -16,3 +16,13 @@
     "sharp": "^0.32.5"
   }
 }
+{
+  "type": "module",
+  "scripts": {
+    "stackbit-dev": "stackbit dev"
+  },
+  "devDependencies": {
+    "@stackbit/types": "^0.6.0",
+    "@stackbit/cms-git": "^0.2.3"
+  }
+}
