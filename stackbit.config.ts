@@ -6,21 +6,28 @@ import type { Model } from '@stackbit/types';
 const docModel: Model = {
   name: 'doc',
   type: 'page',
-  label: 'Documentation Page',
   urlPath: '/docs/{slug}',
-  file: 'src/content/docs/**/*.md',  // 使用 glob 模式匹配集合文件
+  file: 'src/content/docs/**/*.md',
   fields: [
     { 
       name: 'slug', 
       type: 'string', 
       required: true,
-      constrains: { unique: true }
+      constrains: {
+        pattern: '^[a-z0-9/-]+$'  // 与 Zod 校验规则完全一致
+      }
     },
     { name: 'title', type: 'string', required: true },
-    { name: 'category', type: 'enum', options: ['guide', 'api'] },
-    { name: 'content', type: 'markdown' }
+    { 
+      name: 'category', 
+      type: 'enum',
+      options: ['guide', 'api', 'tutorial'],  // 与 Zod enum 完全匹配
+      required: true
+    },
+    { name: 'order', type: 'number' }
   ]
 };
+
 
 export default defineStackbitConfig({
   stackbitVersion: '\~0.6.0',
