@@ -1,4 +1,4 @@
-// stackbit.config.js
+// stackbit.config.ts
 import { defineStackbitConfig } from '@stackbit/types';
 import { GitContentSource } from '@stackbit/cms-git';
 
@@ -10,10 +10,10 @@ export default defineStackbitConfig({
   contentSources: [
     new GitContentSource({
       rootPath: __dirname,
-      contentDirs: ['src/content/posts'], // 确保此路径存在
+      contentDirs: ['src/content/posts'],
       branch: 'preview',
       models: {
-        post: { // 模型名称需与文件名匹配，如 `src/content/posts/post.md`
+        post: {
           type: 'page',
           urlPath: '/posts/{slug}',
           fields: [
@@ -25,16 +25,3 @@ export default defineStackbitConfig({
     })
   ]
 });
-
-// stackbit.config.js
-module.exports = {
-  stackbitVersion: '0.5.4',
-  ssgName: 'astro',       # 明确指定 Astro
-  nodeVersion: '18',
-  contentSources: [{
-    type: 'git',
-    rootPath: './',       # 从根目录开始扫描
-    branch: 'preview',
-    contentDirs: ['src/content']  # 显式声明内容目录
-  }]
-};
