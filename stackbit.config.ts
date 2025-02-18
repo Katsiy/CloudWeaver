@@ -21,7 +21,7 @@ export default defineStackbitConfig({
   contentSources: [
     new GitContentSource({
       rootPath: __dirname,
-      contentDirs: ['src/content/posts'],
+      contentDirs: ['src/content/docs'],
       branch: 'preview',
       models: [postModel] // 必须用数组格式
     })
