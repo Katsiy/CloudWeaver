@@ -1,11 +1,12 @@
+// stackbit.config.ts
 import { defineStackbitConfig } from '@stackbit/types';
 import { GitContentSource } from '@stackbit/cms-git';
 import type { Model } from '@stackbit/types';
 
-const docModel: Model = {
-  name: 'doc',
+const starlightModel: Model = {
+  name: 'starlight-doc',
   type: 'page',
-  label: 'Documentation Page',
+  label: '文档页面',
   urlPath: '/docs/{slug}',
   file: 'src/content/docs/**/*.{md,mdx}',
   fields: [
@@ -13,42 +14,23 @@ const docModel: Model = {
       name: 'slug', 
       type: 'string', 
       required: true,
-      constraints: { 
+      constraints: {
         pattern: '^[a-z0-9/-]+$',
         unique: true
-      }
+      },
+      controlType: 'slug'  // 启用智能路径生成
     },
     { 
+      name: 'sidebar_label',  // 对应 Starlight 的侧边栏标签
+      type: 'string',
+      required: false,
+      description: '覆盖自动生成的侧边栏标签'
+    },
+    {
       name: 'category',
       type: 'enum',
-      options: ['guide', 'reference', 'overview'],
-      controlType: 'dropdown'
-    },
-    { 
-      name: 'featured', 
-      type: 'boolean',
-      default: false
-    }
-  ]
-};
-
-const homePageModel: Model = {
-  name: 'home',
-  type: 'page',
-  singleInstance: true,
-  label: 'Home Page',
-  urlPath: '/',
-  file: 'src/content/docs/index.mdx',
-  fields: [
-    { 
-      name: 'heroTitle', 
-      type: 'string', 
-      required: true 
-    },
-    { 
-      name: 'showToc', 
-      type: 'boolean',
-      default: true
+      options: ['overview', 'guides', 'reference'],
+      group: 'classification'  // 在编辑器中进行分组
     }
   ]
 };
@@ -62,17 +44,18 @@ export default defineStackbitConfig({
     new GitContentSource({
       rootPath: __dirname,
       contentDirs: ['src/content/docs'],
-      models: [docModel, homePageModel],
-      branch: 'preview'
+      branch: 'preview',
+      models: [starlightModel]
     })
   ],
   
   siteMap: ({ objects }) => {
     return objects?.map(obj => ({
-      urlPath: obj.modelName === 'home' ? 
-        '/' : 
-        `/docs/${obj.slug.replace(/^index$/, '')}`,
-      sourceObjectId: obj.id
+      urlPath: obj.slug === 'index' ? 
+        '/docs' : 
+        `/docs/${obj.slug}`,
+      sourceObjectId: obj.id,
+      label: obj.sidebar_label || obj.title  // 优先使用自定义标签
     })) || [];
   }
 });
