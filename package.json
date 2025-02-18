@@ -10,6 +10,11 @@
     "preview": "astro preview",
     "astro": "astro",
     "stackbit-dev": "stackbit dev"
+    "validate": "run-s validate:*",
+    "validate:content": "astro check",
+    "validate:stackbit": "stackbit validate",
+    "fix:slugs": "node scripts/fix-slugs.mjs",
+    "preview": "rm -rf .stackbit && stackbit dev --clear-cache"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.32.0",
