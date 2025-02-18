@@ -8,21 +8,17 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "stackbit-dev": "stackbit dev"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.32.0",
     "astro": "^5.1.5",
     "sharp": "^0.32.5"
-  }
-}
-{
-  "type": "module",
-  "scripts": {
-    "stackbit-dev": "stackbit dev"
   },
   "devDependencies": {
     "@stackbit/types": "^0.6.0",
-    "@stackbit/cms-git": "^0.2.3"
+    "@stackbit/cms-git": "^0.2.3",
+    "typescript": "^5.4.2"
   }
 }
